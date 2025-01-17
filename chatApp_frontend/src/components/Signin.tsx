@@ -29,6 +29,7 @@ const SignInCard = () => {
         // Redirect to /demo on successful login
         const data = await response.json();
         localStorage.setItem("userId", data.userId);
+        localStorage.setItem("token", data.token);
         window.location.href = "/demo";
       } else {
 
