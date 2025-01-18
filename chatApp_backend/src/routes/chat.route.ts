@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import authenticateJWT from '../middleware';
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -78,7 +79,7 @@ router.post('/conversations', authenticateJWT, async (req: Request, res: Respons
             }
         });
 
-        res.status(201).json({"conversation": conversation});
+        res.status(201).json({ "conversation": conversation });
     } catch (error) {
         console.error('Error creating conversation:', error);
         res.status(500).json({ error: 'Failed to create conversation' });
@@ -88,13 +89,13 @@ router.post('/conversations', authenticateJWT, async (req: Request, res: Respons
 // Get messages for a specific conversation
 router.get('/conversations/:conversationId', authenticateJWT, async (req: Request, res: Response): Promise<any> => {
     try {
-        const { conversation_id } = req.params;
+        const { conversationId } = req.params;
         const userId = req.headers['user-id'] as string;
         // Verify user has access to this conversation
         const participant = await prisma.conversationParticipant.findFirst({
             where: {
                 userId: userId,
-                conversationId: conversation_id
+                conversationId: new ObjectId(conversationId).toString()
             }
         });
 
@@ -103,9 +104,10 @@ router.get('/conversations/:conversationId', authenticateJWT, async (req: Reques
             return;
         }
 
+        //fnding the messages array of the conversation
         const messages = await prisma.message.findMany({
             where: {
-                conversationId: conversation_id
+                conversationId: conversationId
             },
             orderBy: {
                 createdAt: 'asc'
@@ -120,7 +122,7 @@ router.get('/conversations/:conversationId', authenticateJWT, async (req: Reques
             }
         });
 
-        res.status(201).json({"messages": messages});
+        res.status(201).json({ "messages": messages });
         return;
     } catch (error) {
         console.error('Error fetching messages:', error);
@@ -130,31 +132,43 @@ router.get('/conversations/:conversationId', authenticateJWT, async (req: Reques
 });
 
 // Send a message in a conversation
-router.post('/conversations/:conversationid', authenticateJWT, async (req: Request, res: Response): Promise<any> => {
+router.post('/conversations/:conversationId', authenticateJWT, async (req: Request, res: Response): Promise<any> => {
     try {
-        const { conversation_id } = req.params;
-        const { content } = req.body;
+        const { conversationId } = req.params;
         const userId = req.headers['user-id'] as string;
+        const { content } = req.body;
+
+        const cleanConversationId = conversationId.replace('conversationId=', '');
+
+        console.log("Incoming request to send message:", { conversationId, content, userId });
 
         // Verify user has access to this conversation
         const participant = await prisma.conversationParticipant.findFirst({
             where: {
                 userId: userId,
-                conversationId: conversation_id
+                conversationId: new ObjectId(cleanConversationId).toString()
             }
         });
 
-        console.log("1")
         if (!participant) {
+            console.warn(`Access denied for userId: ${userId} to conversationId: ${conversationId}`);
             return res.status(403).json({ error: 'Access denied' });
         }
 
-        console.log("2")
+        // Validate conversation exists
+        const conversation = await prisma.conversation.findUnique({
+            where: { id: cleanConversationId }
+        });
+
+        if (!conversation) {
+            console.warn(`Conversation not found for conversationId: ${conversationId}`);
+            return res.status(404).json({ error: 'Conversation not found' });
+        }
 
         const message = await prisma.message.create({
             data: {
                 content,
-                conversationId: conversation_id,
+                conversationId: cleanConversationId,
                 senderId: userId
             },
             include: {
@@ -167,14 +181,21 @@ router.post('/conversations/:conversationid', authenticateJWT, async (req: Reque
             }
         });
 
-        console.log("2")
+        console.log("Message created successfully:", message);
+
         // Update conversation's updatedAt timestamp
-        await prisma.conversation.update({
-            where: { id: conversation_id },
+        const update = await prisma.conversation.update({
+            where: { id: cleanConversationId },
             data: { updatedAt: new Date() }
         });
 
-        res.status(201).json({"message": message});
+        if (!update) {
+            console.warn(`Failed to update conversation for conversationId: ${conversationId}`);
+            res.status(400).json({ error: 'Failed to update conversation' });
+        }
+
+        res.status(201).json({ "message": message });
+
     } catch (error) {
         console.error('Error sending message:', error);
         res.status(500).json({ error: 'Failed to send message' });
@@ -184,14 +205,16 @@ router.post('/conversations/:conversationid', authenticateJWT, async (req: Reque
 // Delete a conversation
 router.delete('/conversations/:conversationId', authenticateJWT, async (req: Request, res: Response): Promise<any> => {
     try {
-        const { conversation_id } = req.params;
-        const userId = getUserIdFromHeaders(req);
+        const { conversationId } = req.params;
+        const userId = req.headers['user-id'] as string;
+
+        const cleanConversationId = conversationId.replace('conversationId=', '');
 
         // Verify user has access to this conversation
         const participant = await prisma.conversationParticipant.findFirst({
             where: {
                 userId: userId,
-                conversationId: conversation_id
+                conversationId: cleanConversationId
             }
         });
 
@@ -201,7 +224,7 @@ router.delete('/conversations/:conversationId', authenticateJWT, async (req: Req
 
         // Delete the conversation and all related messages
         await prisma.conversation.delete({
-            where: { id: conversation_id }
+            where: { id: cleanConversationId }
         });
 
         res.status(201).json({ message: 'Conversation deleted successfully' });
@@ -214,15 +237,18 @@ router.delete('/conversations/:conversationId', authenticateJWT, async (req: Req
 // Update conversation title
 router.patch('/conversations/:conversationId', authenticateJWT, async (req: Request, res: Response): Promise<any> => {
     try {
-        const { conversation_id } = req.params;
+        const { conversationId } = req.params;
         const { title } = req.body;
-        const userId = getUserIdFromHeaders(req);
+        const userId = req.headers['user-id'] as string;
+
+        const cleanConversationId = conversationId.replace('conversationId=', '');
+
 
         // Verify user has access to this conversation
         const participant = await prisma.conversationParticipant.findFirst({
             where: {
                 userId: userId,
-                conversationId: conversation_id
+                conversationId: cleanConversationId
             }
         });
 
@@ -231,11 +257,11 @@ router.patch('/conversations/:conversationId', authenticateJWT, async (req: Requ
         }
 
         const updatedConversation = await prisma.conversation.update({
-            where: { id: conversation_id },
+            where: { id: cleanConversationId },
             data: { title }
         });
 
-        res.status(201).json({"updatedConversation": updatedConversation});
+        res.status(201).json({ "updatedConversation": updatedConversation });
     } catch (error) {
         console.error('Error updating conversation:', error);
         res.status(500).json({ error: 'Failed to update conversation' });

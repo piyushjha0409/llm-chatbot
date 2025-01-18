@@ -19,7 +19,7 @@ model User {
 
 model Conversation {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  title        String
+  title        String?
   participants ConversationParticipant[]
   messages     Message[]
   createdAt    DateTime  @default(now())
