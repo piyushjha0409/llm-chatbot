@@ -1,12 +1,11 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import dotenv from 'dotenv';
 dotenv.config();
 import cors from "cors";
 import bodyParser from "body-parser";
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
+import { prisma } from "./lib/dbClient";
 
 // Import Routes
 import authRoutes from "./routes/auth.route";

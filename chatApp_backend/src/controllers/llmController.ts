@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
-
 
 export const getLLMResponse = async (req: Request, res: Response): Promise<any> => {
     try {

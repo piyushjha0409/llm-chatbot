@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Mail, Lock } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Mail, Lock } from 'lucide-react';
-import ErrorComponent from './ErrorComponent';
-
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import ErrorComponent from '@/components/ErrorComponent';
 
 const SignInCard = () => {
   const [email, setEmail] = useState('');
@@ -42,11 +42,13 @@ const SignInCard = () => {
   };
 
   const userId = localStorage.getItem("userId");
+  
   useEffect(() => {
     if (userId) {
       window.location.href = "/demo";
     }
-  }, []);
+  }, [userId]);
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="space-y-1">

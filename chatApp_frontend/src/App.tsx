@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+
 import './App.css'
 import Landingpage from './components/Landingpage'
 import Signin from './components/Signin'
 import Signup from './components/Signup'
 import Dashboard from './components/Dashboard'
-import { useEffect, useState } from 'react'
-// import { useEffect, useState } from 'react'
 
 function App() {
   const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId"));
@@ -28,9 +28,7 @@ function App() {
     <>
       <Router>
         <Routes>
-
           <Route path="/demo" element={<Dashboard />} />
-
           {
             !userId && (
               <>
@@ -40,7 +38,6 @@ function App() {
               </>
             )
           }
-
         </Routes>
       </Router>
     </>

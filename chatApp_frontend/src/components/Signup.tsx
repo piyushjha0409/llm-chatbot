@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User, Mail, Lock } from 'lucide-react';
+
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { User, Mail, Lock } from 'lucide-react';
 
 const SignUpForm = () => {
     const navigate = useNavigate();
@@ -49,7 +50,7 @@ const SignUpForm = () => {
         if (userId) {
             window.location.href = "/demo";
         }
-    }, []);
+    }, [userId]);
 
     return (
         <Card className="w-full max-w-md mx-auto">

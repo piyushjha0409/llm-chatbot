@@ -1,10 +1,9 @@
+import { Router } from "express";
 
-const { getLLMResponse } = require('../controllers/llmController');
+import { getLLMResponse } from '../controllers/llmController';
 
-
-const router = require('express').Router();
+const router = Router();
 
 router.post('/', getLLMResponse);
-
 
 export default router;

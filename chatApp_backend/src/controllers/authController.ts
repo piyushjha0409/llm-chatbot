@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const prisma = new PrismaClient();
+import { prisma } from "../lib/dbClient";
 
-// Environment Variables
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 // Register a new user
