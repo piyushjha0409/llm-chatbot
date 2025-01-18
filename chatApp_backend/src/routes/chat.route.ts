@@ -194,7 +194,7 @@ router.post('/conversations/:conversationId', authenticateJWT, async (req: Reque
             res.status(400).json({ error: 'Failed to update conversation' });
         }
 
-        res.status(201).json({ "message": message });
+        res.status(203).json({ messages: [message] });
 
     } catch (error) {
         console.error('Error sending message:', error);
