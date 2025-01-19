@@ -8,22 +8,22 @@ generator client {
 }
 
 model User {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  username    String
-  email       String    @unique
-  password    String
-  messages    Message[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  username      String
+  email         String         @unique
+  password      String
+  messages      Message[]
   conversations Conversation[]
 }
 
 model Conversation {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  title        String?
-  messages     Message[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  userId String @db.ObjectId
-  user User @relation(fields:[userId], references: [id])
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String?
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String    @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Message {
@@ -31,11 +31,11 @@ model Message {
   content        String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId String       @db.ObjectId
-  sender        User         @relation(fields: [senderId], references: [id])
-  senderId      String       @db.ObjectId
-  senderType    MessageBy
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  sender         User?        @relation(fields: [senderId], references: [id])
+  senderId       String?      @db.ObjectId
+  senderType     MessageBy
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 enum MessageBy {
