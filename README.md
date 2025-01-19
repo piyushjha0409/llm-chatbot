@@ -9,6 +9,7 @@ cd chatApp_backend
 `npm install`
 
 **copy an .env.example file and make it .env and fill credentials and api key**
+
 DATABASE_URL= <url>
 
 GEMINI_KEY=<api_key>
