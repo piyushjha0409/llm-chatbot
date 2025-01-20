@@ -87,37 +87,43 @@ const Dashboard = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    const userMessage: Message = {
-      content: inputMessage,
-      senderType: "User",
-      senderId: localStorage.getItem("userId") as string,
-    };
-
-    let newConversation: Conversation | undefined;
-
-    if (!selectedConversation?.id) {
-      newConversation = await createNewConversation(inputMessage);
-    }
-
     try {
+      const userMessage: Message = {
+        content: inputMessage,
+        senderType: "User",
+        senderId: localStorage.getItem("userId") as string,
+      };
+
+      let newConversation: Conversation | undefined;
+
+      if (!selectedConversation?.id) {
+        newConversation = await createNewConversation(inputMessage);
+      }
+
+      setSelectedConversation((prev) => ({
+        id: newConversation?.id ?? prev?.id ?? "",
+        title: prev?.title ? prev.title : "New Chat",
+        messages: [...(prev?.messages ?? []), userMessage],
+      }));
+
+      setInputMessage("");
+
       const llmResponse = await fetchLLMResponse(inputMessage);
       const botMessage: Message = {
         content: llmResponse,
         senderType: "System",
       };
 
+      setSelectedConversation((prev) => ({
+        id: prev?.id ?? "",
+        title: prev?.title ?? "New Chat",
+        messages: [...(prev?.messages ?? []), botMessage],
+      }));
+
       await sendMessageToConversation(
         newConversation?.id ?? selectedConversation?.id ?? "",
         [userMessage, botMessage]
       );
-
-      setSelectedConversation((prev) => ({
-        id: newConversation?.id ?? prev?.id ?? "",
-        title: prev?.title ? prev.title : "New Chat",
-        messages: [...(prev?.messages ?? []), userMessage, botMessage],
-      }));
-
-      setInputMessage("");
     } catch (error) {
       alert(`Error fetching LLM response: ${error}`);
     }
