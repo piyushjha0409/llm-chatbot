@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/controllers/authController.ts","./src/controllers/chatController.ts","./src/models/chat.ts","./src/models/user.ts","./src/routes/auth.route.ts","./src/routes/chat.route.ts"],"errors":true,"version":"5.7.3"}
+{"root":["./src/index.ts","./src/middleware.ts","./src/@types/express.d.ts","./src/controllers/authController.ts","./src/controllers/llmController.ts","./src/lib/dbClient.ts","./src/routes/auth.route.ts","./src/routes/chat.route.ts","./src/routes/llm.route.ts"],"version":"5.7.3"}
