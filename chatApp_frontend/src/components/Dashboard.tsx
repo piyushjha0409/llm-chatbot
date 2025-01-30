@@ -28,7 +28,7 @@ const Dashboard = () => {
 
   const fetchLLMResponse = async (prompt: string) => {
     try {
-      const response = await fetch("http://localhost:3000/api/llm", {
+      const response = await fetch("https://llm-chatbot-server.vercel.app/api/llm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const Dashboard = () => {
       if (userId) headers["user-id"] = userId;
 
       const response = await fetch(
-        `http://localhost:3000/api/chat/conversations`,
+        `/chat/conversations`,
         {
           method: "POST",
           headers,
@@ -146,7 +146,7 @@ const Dashboard = () => {
       };
 
       const response = await fetch(
-        `http://localhost:3000/api/chat/conversations/${conversationId}`,
+        `https://llm-chatbot-server.vercel.app/api/chat/conversations/${conversationId}`,
         {
           method: "POST",
           headers,
@@ -182,7 +182,7 @@ const Dashboard = () => {
       }
 
       const response = await fetch(
-        `http://localhost:3000/api/chat/conversations`,
+        `https://llm-chatbot-server.vercel.app/api/chat/conversations`,
         {
           method: "GET",
           headers: headers,
@@ -215,7 +215,7 @@ const Dashboard = () => {
       };
 
       const response = await fetch(
-        `http://localhost:3000/api/chat/conversations/${conversationId}`,
+        `https://llm-chatbot-server.vercel.app/api/chat/conversations/${conversationId}`,
         {
           method: "GET",
           headers,
