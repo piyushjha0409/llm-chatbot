@@ -28,13 +28,16 @@ const Dashboard = () => {
 
   const fetchLLMResponse = async (prompt: string) => {
     try {
-      const response = await fetch("https://llm-chatbot-6rx6.onrender.com/api/llm", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
+      const response = await fetch(
+        "https://llm-chatbot-6rx6.onrender.com/api/llm",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        }
+      );
       const data = await response.json();
       return data.message;
     } catch (error) {
@@ -56,14 +59,11 @@ const Dashboard = () => {
 
       if (userId) headers["user-id"] = userId;
 
-      const response = await fetch(
-        `/chat/conversations`,
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ title, userId }),
-        }
-      );
+      const response = await fetch(`/chat/conversations`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ title, userId }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to create a new conversation");
@@ -240,6 +240,13 @@ const Dashboard = () => {
       return [];
     }
   };
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      window.location.href = "/";
+    }
+  }, []);
 
   return (
     <div className="flex h-screen">
