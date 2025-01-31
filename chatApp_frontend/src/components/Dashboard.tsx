@@ -59,7 +59,7 @@ const Dashboard = () => {
 
       if (userId) headers["user-id"] = userId;
 
-      const response = await fetch(`/chat/conversations`, {
+      const response = await fetch(`https://llm-chatbot-6rx6.onrender.com/chat/conversations`, {
         method: "POST",
         headers,
         body: JSON.stringify({ title, userId }),
