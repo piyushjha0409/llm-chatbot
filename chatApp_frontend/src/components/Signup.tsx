@@ -32,7 +32,7 @@ const SignUpForm = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://llm-chatbot-6rx6.onrender.com/api/auth/register",
+        "https://talkbot.askmesol.fun/api/auth/register",
         {
           method: "POST",
           headers: {

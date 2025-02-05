@@ -29,7 +29,7 @@ const Dashboard = () => {
   const fetchLLMResponse = async (prompt: string) => {
     try {
       const response = await fetch(
-        "https://llm-chatbot-6rx6.onrender.com/api/llm",
+        "https://talkbot.askmesol.fun/api/llm",
         {
           method: "POST",
           headers: {
@@ -59,7 +59,7 @@ const Dashboard = () => {
 
       if (userId) headers["user-id"] = userId;
 
-      const response = await fetch(`https://llm-chatbot-6rx6.onrender.com/chat/conversations`, {
+      const response = await fetch(`https://talkbot.askmesol.fun/chat/conversations`, {
         method: "POST",
         headers,
         body: JSON.stringify({ title, userId }),
@@ -146,7 +146,7 @@ const Dashboard = () => {
       };
 
       const response = await fetch(
-        `https://llm-chatbot-6rx6.onrender.com/api/chat/conversations/${conversationId}`,
+        `https://talkbot.askmesol.fun/api/chat/conversations/${conversationId}`,
         {
           method: "POST",
           headers,
@@ -182,7 +182,7 @@ const Dashboard = () => {
       }
 
       const response = await fetch(
-        `https://llm-chatbot-6rx6.onrender.com/api/chat/conversations`,
+        `https://talkbot.askmesol.fun/api/chat/conversations`,
         {
           method: "GET",
           headers: headers,
@@ -215,7 +215,7 @@ const Dashboard = () => {
       };
 
       const response = await fetch(
-        `https://llm-chatbot-6rx6.onrender.com/api/chat/conversations/${conversationId}`,
+        `https://talkbot.askmesol.fun/api/chat/conversations/${conversationId}`,
         {
           method: "GET",
           headers,
