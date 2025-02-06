@@ -59,7 +59,7 @@ const Dashboard = () => {
 
       if (userId) headers["user-id"] = userId;
 
-      const response = await fetch(`https://talkbot.askmesol.fun/chat/conversations`, {
+      const response = await fetch(`https://talkbot.askmesol.fun/api/chat/conversations`, {
         method: "POST",
         headers,
         body: JSON.stringify({ title, userId }),
